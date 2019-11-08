@@ -58,9 +58,11 @@ class SwipeablePanel extends Component {
 					if (0 < absDistance && absDistance < 100) {
 						this._animateToLargePanel();
 					} else if (100 < absDistance && absDistance < CONTAINER_HEIGHT - 200) {
-						if (onlyLarge) {
+						if (onlyLarge && allowToClose ) {
 							this._animateClosingAndOnCloseProp(true);
-						} else {
+						} else if (onlyLarge && !allowToClose ) {
+							this._animateToSmallPanel();
+						}else {
 							this._animateToSmallPanel();
 						}
 					} else if (CONTAINER_HEIGHT - 200 < absDistance) {
@@ -200,15 +202,13 @@ class SwipeablePanel extends Component {
 				>
 					<Bar />
 					{this.props.onPressCloseButton && <Close rootStyle={closeRootStyle} iconStyle={closeIconStyle} onPress={this.onPressCloseButton} />}
-					<ScrollView contentContainerStyle={SwipeablePanelStyles.scrollViewContentContainerStyle}>
+					<React.Fragment>
 						{this.state.canScroll ? (
-							<TouchableHighlight>
-								<React.Fragment>{this.props.children}</React.Fragment>
-							</TouchableHighlight>
+							this.props.children
 						) : (
 							this.props.children
 						)}
-					</ScrollView>
+					</React.Fragment>
 				</Animated.View>
 			</Animated.View>
 		) : null;
