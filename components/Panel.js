@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 
 const FULL_HEIGHT = Dimensions.get('window').height;
 const FULL_WIDTH = Dimensions.get('window').width;
-const CONTAINER_HEIGHT = FULL_HEIGHT - 100;
+const CONTAINER_HEIGHT = FULL_HEIGHT - 50;
 
 const STATUS = {
 	CLOSED: 0,
@@ -52,7 +52,7 @@ class SwipeablePanel extends Component {
 				const distance = this.oldPan.y - this.pan.y._value;
 				const absDistance = Math.abs(distance);
 				const {status} = this.state;
-				const {onlyLarge} = this.props;
+				const {onlyLarge, allowToClose} = this.props;
 
 				if (status === STATUS.LARGE) {
 					if (0 < absDistance && absDistance < 100) {
@@ -67,8 +67,10 @@ class SwipeablePanel extends Component {
 						this._animateClosingAndOnCloseProp();
 					}
 				} else {
-					if (distance < -100) {
+					if (distance < -100 && allowToClose) {
 						this._animateClosingAndOnCloseProp(false);
+					}else if (distance < -100 && !allowToClose) {
+						this._animateToSmallPanel();
 					} else if (distance > 0 && distance > 50) {
 						this._animateToLargePanel();
 					} else {
@@ -224,6 +226,7 @@ SwipeablePanel.propTypes = {
 	closeIconStyle: PropTypes.object,
 	openLarge: PropTypes.bool,
 	onlyLarge: PropTypes.bool,
+	allowToClose: PropTypes.bool
 };
 
 SwipeablePanel.defaultProps = {
@@ -234,6 +237,7 @@ SwipeablePanel.defaultProps = {
 	closeIconStyle: {},
 	openLarge: false,
 	onlyLarge: false,
+	allowToClose: true
 };
 
 const SwipeablePanelStyles = StyleSheet.create({
@@ -249,7 +253,7 @@ const SwipeablePanelStyles = StyleSheet.create({
 		position: 'absolute',
 		height: CONTAINER_HEIGHT,
 		width: FULL_WIDTH - 50,
-		transform: [ { translateY: FULL_HEIGHT - 100 } ],
+		transform: [ { translateY: FULL_HEIGHT - 50 } ],
 		display: 'flex',
 		flexDirection: 'column',
 		backgroundColor: 'white',
